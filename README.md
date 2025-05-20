@@ -1,21 +1,22 @@
-[![Github](https://img.shields.io/badge/Version_1.0-blue)](https://github.com/labdipsco/TriggerBox)
-[![Github](https://img.shields.io/badge/GNU_General_Public_License-orange)](https://github.com/labdipsco/TriggerBox)
+[![Github](https://img.shields.io/badge/Version_1.0-blue)](https://github.com/labdipsco/open-trigger-2input)
+[![Github](https://img.shields.io/badge/GNU_General_Public_License-orange)](https://github.com/labdipsco/open-trigger-2input)
 
 #Open Trigger 
 
-Trigger Interface for Psychological Experiment and Stimulus. It works with major Stimulus Presentation Software. It receives triggers from usb and sends to parallel port. 
+Trigger Interface for Psychological Experiment and Stimulus. It works with major Stimulus Presentation Software. It can receive two triggers from two usb ports and sends to parallel port. 
 
 Features:
- - Usb connection to Windows and Linux PC.
+ - Two Usb connection to send 
  - Auto trigger function, set a trigger timeout.
  - Trigger Elaboration < 1ms
 
 Installation:
 
-Upload parallel.ino sketch to Arduino uno R3 or R4 minima.
+Upload parallel2Inputs.ino sketch to Arduino Mega
 
 Hardware:
-- Arduino Uno R4 minima or Uno R3 https://www.arduino.cc/
+- Arduino Mega https://www.arduino.cc/
+- Arduino usb 
 - Parallel port cable
 
 <img src="https://github.com/user-attachments/assets/7cb8b0bf-258f-4f8e-a3a4-b13eee1292fd" width="300">
