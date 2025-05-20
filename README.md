@@ -40,8 +40,8 @@ Eprime example:
 Test:
 - tested with eprime3, opensesame, psychopy
 
-Try it on tinkercad:
-- https://www.tinkercad.com/  send command via tinkercard console
+Try it on SimulIDE:
+- https://simulide.com/p/  send command via SimulIDE console
 
 
 ![image](https://github.com/user-attachments/assets/f9195bcd-48f6-46df-9165-b114d715a06b)
