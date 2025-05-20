@@ -16,7 +16,7 @@ Upload parallel2Inputs.ino sketch to Arduino Mega
 
 Hardware:
 - Arduino Mega https://www.arduino.cc/
-- Arduino usb 
+- USB to TTL serial adapter (FT232-AZ)
 - Parallel port cable
 
 <img src="https://github.com/user-attachments/assets/7cb8b0bf-258f-4f8e-a3a4-b13eee1292fd" width="300">
