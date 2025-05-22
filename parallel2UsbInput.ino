@@ -1,3 +1,4 @@
+
 //command 0 to F on Serial and Serial1
 //config command: pauto<on/off>wait<on/off>time<0 to 99999999>@
 //arduino - parallel port pins: 37-D0, 36-D1, ...,30-D7
@@ -132,6 +133,7 @@ void liveConfiguration() {
 }
 
 void serialWaitModeAutoOnOff() {
+     
     trig1 = readHexCharFromSerial(Serial);
     if ((trig1 != "-1") && (received1 == false)) {
         bin1 = NibbleToBinaryString(trig1);
@@ -213,17 +215,18 @@ void serialNoWaitModeAutoModeOn() {
 }
 
 void loop() {
-    if ((Serial.available()) || (Serial1.available())) {
+    if (Serial.available()>0)  {
         liveConfiguration();
-
-        if (config.waitMode == true) {
-            serialWaitModeAutoOnOff();
-        }
-
-        if ((config.waitMode == false) && (config.autoMode == false)) {
-            serialNoWaitModeAutoModeOff();
-        }
     }
+        
+    if (config.waitMode == true) {
+            serialWaitModeAutoOnOff();
+    }
+
+    if ((config.waitMode == false) && (config.autoMode == false)) {
+            serialNoWaitModeAutoModeOff();
+    }
+    
 
     if ((config.waitMode == false) && (config.autoMode == true)) {
         serialNoWaitModeAutoModeOn();
