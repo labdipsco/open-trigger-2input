@@ -1,4 +1,3 @@
-
 //command 0 to F on Serial and Serial1
 //config command: pauto<on/off>wait<on/off>time<0 to 99999999>@
 //arduino - parallel port pins: 37-D0, 36-D1, ...,30-D7
@@ -18,8 +17,6 @@ struct Settings {
 const uint16_t CONFIG_SIGNATURE = 0xBEEF;
 Settings config;
 
-// Maschera per i pin D30–D37 (PORTC)
-const uint8_t maskC = 0b11111111;  // D30–D37 (PC0–PC7)
 
 void setup() {
     Serial.begin(115200);
@@ -38,17 +35,18 @@ void setup() {
 
     // Configurazione per Arduino Mega 2560
     #if defined(__AVR_ATmega2560__)
-        DDRC = 0b11111111; 
-        PORTC = 0b00000000;  
+        DDRA = 0b11111111; 
+        PORTA = 0b00000000;  
     #else
         Serial.println("Scheda non riconosciuta");
     #endif
 }
 
 void SetParallelPort(String pvalue) {
-    uint8_t portc_out = strtol(pvalue.c_str(), nullptr, 2);  // Base 2 per il binario
+    uint8_t porta_out = strtol(pvalue.c_str(), nullptr, 2);  // Base 2 per il binario
+    
     #if defined(__AVR_ATmega2560__)
-        PORTC = portc_out;
+        PORTA = porta_out;
     #endif
 }
 
@@ -175,7 +173,7 @@ void serialNoWaitModeAutoModeOff() {
     if (trig1 != "-1") bin1 = NibbleToBinaryString(trig1);
     if (trig2 != "-1") bin2 = NibbleToBinaryString(trig2);
 
-    SetParallelPort(bin1 + bin2);
+    SetParallelPort(bin2 + bin1);
 }
 
 void serialNoWaitModeAutoModeOn() {
@@ -215,6 +213,9 @@ void serialNoWaitModeAutoModeOn() {
 }
 
 void loop() {
+   //pin 29 28 .... 23 22
+  //  PORTA=0b00110011;
+//return;
     if (Serial.available()>0)  {
         liveConfiguration();
     }
