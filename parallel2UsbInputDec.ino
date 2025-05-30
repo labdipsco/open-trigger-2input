@@ -232,13 +232,12 @@ void serialNoWaitModeAutoModeOn() {
 }
 
 void loop() {
-   //pin 29 28 .... 23 22
-  //  PORTA=0b00110011;
-//return;
-    if (Serial.available()>0)  {
+
+    if (Serial.available()>4)  {
+        Serial.println("--qui--");
         liveConfiguration(Serial);
     }
-    if (Serial1.available()>0)  {
+    if (Serial1.available()>4)  {
         liveConfiguration(Serial1);
     }
         
