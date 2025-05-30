@@ -110,12 +110,12 @@ bool timer2 = false;
 bool received1 = false;
 bool received2 = false;
 
-void liveConfiguration() {
-    char firstChar = Serial.peek();
+void liveConfiguration(HardwareSerial &serialx) {
+    char firstChar = serialx.peek();
     firstChar = tolower(firstChar);
 
     if (firstChar == 'p') {
-        String cmd = Serial.readStringUntil('@');
+        String cmd = serialx.readStringUntil('@');
         cmd.toLowerCase();
         Serial.println(cmd);
 
@@ -132,20 +132,20 @@ void liveConfiguration() {
         }
 
         int tIndex = cmd.indexOf("time");
-        Serial.println(tIndex);
+        serialx.println(tIndex);
         if (tIndex >= 0) {
             String tPart = cmd.substring(tIndex + 4);
             config.duration = tPart.toInt();
         }
 
-        Serial.println("---- Comando ricevuto ----");
-        Serial.print("autoMode: ");
-        Serial.println(config.autoMode ? "ON" : "OFF");
-        Serial.print("waitMode: ");
-        Serial.println(config.waitMode ? "ON" : "OFF");
-        Serial.print("duration: ");
-        Serial.println(config.duration);
-        Serial.println("--------------------------");
+        serialx.println("---- Comando ricevuto ----");
+        serialx.print("autoMode: ");
+        serialx.println(config.autoMode ? "ON" : "OFF");
+        serialx.print("waitMode: ");
+        serialx.println(config.waitMode ? "ON" : "OFF");
+        serialx.print("duration: ");
+        serialx.println(config.duration);
+        serialx.println("--------------------------");
     }
 }
 
@@ -236,7 +236,10 @@ void loop() {
   //  PORTA=0b00110011;
 //return;
     if (Serial.available()>0)  {
-        liveConfiguration();
+        liveConfiguration(Serial);
+    }
+    if (Serial1.available()>0)  {
+        liveConfiguration(Serial1);
     }
         
     if (config.waitMode == true) {
