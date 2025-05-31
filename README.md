@@ -13,10 +13,64 @@ Features:
 
 ## How it works
 
-Arduino listens on both USB serial ports for the arrival of a trigger.
-The trigger can have a value from 00 to 15.
-The triggers received from Serial1 and Serial2 are each converted into 4-bit binary numbers and then combined into a single 8-bit binary number, which is written to the parallel port.
-For example, if Serial1 receives 5 (0101) and Serial2 receives 12 (1100), the parallel port will be set to: 11000101.
+## System Overview: Dual Serial Text-Based Trigger Input with Parallel Output Encoding
+
+The Arduino microcontroller listens concurrently on two USB serial interfaces: `Serial1` and `Serial2`.  
+Each interface receives a **2-character ASCII-encoded decimal string** representing a trigger value in the range `"00"` to `"15"`.  
+Upon reception, each string is parsed into an integer (0–15), then converted to a 4-bit binary value.
+
+The final 8-bit output is composed as follows:
+
+- **Upper nibble** (`bits 7–4`) = value from `Serial2`  
+- **Lower nibble** (`bits 3–0`) = value from `Serial1`  
+
+The composed 8-bit value is written to an 8-bit digital parallel output port (e.g., `PORTC`).
+
+### 🧪 Example
+
+| Serial1 input | Serial2 input | Output (hex) | Output (binary) |
+|---------------|----------------|---------------|------------------|
+| `"05"`        | `"12"`         | `0xC5`        | `11000101`       |
+
+---
+
+## 🔁 Synchronization Modes
+
+### 🔹 Sync OFF
+- A value received on **either** serial port is immediately written to the output.
+- The other nibble retains its **last known** value.
+- Enables low-latency partial updates.
+
+### 🔸 Sync ON
+- The system buffers inputs until **both** `Serial1` and `Serial2` have received new values.
+- The combined byte is written only when both halves are ready.
+- Ensures full synchronization between inputs.
+
+---
+
+## ⏱️ Auto Mode (autoOn / autoOff)
+
+The system supports an **auto-reset** mechanism based on a timeout (in milliseconds), configurable through an `AutoMode` flag.
+
+### 🟢 Auto ON
+- After the output value is written, a countdown begins.
+- Once the timeout expires:
+  - **Sync ON mode**: the **entire** parallel port is cleared to `0x00`.
+  - **Sync OFF mode**: **only the nibble** corresponding to the triggering serial port is reset to `0b0000`.
+    - The other nibble remains unchanged.
+
+### 🔴 Auto OFF
+- No automatic reset is performed.
+- The output value remains until new data is received.
+
+This feature allows generation of **timed output pulses** on the parallel port for external device control or triggering logic.
+
+---
+
+Let me know if you'd like a code snippet or usage demo included below!
+
+
+
 
 Installation:
 
