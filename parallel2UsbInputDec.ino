@@ -60,7 +60,7 @@ bool isHexChar2(char c) {
     return (c >= '0' && c <= '5') ;
 }
 
-String readHexCharFromSerial(HardwareSerial &serialx) {
+String read2CharFromSerial(HardwareSerial &serialx) {
     if (serialx.available() >= 2) {
         char firstChar = serialx.peek();
         if (firstChar=='p') {return "-1";}
@@ -151,13 +151,13 @@ void liveConfiguration(HardwareSerial &serialx) {
 
 void serialWaitModeAutoOnOff() {
      
-    trig1 = readHexCharFromSerial(Serial);
+    trig1 = read2CharFromSerial(Serial);
     if ((trig1 != "-1") && (received1 == false)) {
         bin1 = convertToBinary4Bit(trig1);
         received1 = true;
     }
 
-    trig2 = readHexCharFromSerial(Serial1);
+    trig2 = read2CharFromSerial(Serial1);
     if ((trig2 != "-1") && (received2 == false)) {
         bin2 = convertToBinary4Bit(trig2);
         received2 = true;
@@ -186,8 +186,8 @@ void serialWaitModeAutoOnOff() {
 }
 
 void serialNoWaitModeAutoModeOff() {
-    trig1 = readHexCharFromSerial(Serial);
-    trig2 = readHexCharFromSerial(Serial1);
+    trig1 = read2CharFromSerial(Serial);
+    trig2 = read2CharFromSerial(Serial1);
 
     if (trig1 != "-1") bin1 = convertToBinary4Bit(trig1);
     if (trig2 != "-1") bin2 = convertToBinary4Bit(trig2);
@@ -196,7 +196,7 @@ void serialNoWaitModeAutoModeOff() {
 }
 
 void serialNoWaitModeAutoModeOn() {
-    trig1 = readHexCharFromSerial(Serial);
+    trig1 = read2CharFromSerial(Serial);
     unsigned long duration = config.duration;
     duration = duration * 1000;
 
@@ -205,7 +205,7 @@ void serialNoWaitModeAutoModeOn() {
         timer1 = false;
     }
 
-    trig2 = readHexCharFromSerial(Serial1);
+    trig2 = read2CharFromSerial(Serial1);
     if ((timer2 == true) && (trig2 == "-1") && (micros() - startTime2 >= duration)) {
         trig2 = "0";
         timer2 = false;
