@@ -70,8 +70,6 @@ This feature allows generation of **timed output pulses** on the parallel port f
 Let me know if you'd like a code snippet or usage demo included below!
 
 
-
-
 Installation:
 
 Upload parallel2Inputs.ino sketch to Arduino Mega
@@ -92,12 +90,16 @@ Arduino to Parallel port Connections:
  - arduino pin 29 --> pin D7 parallel port
 
 Alvailable Commands:
-- send trigger code 0-255:  S<trigger code>E    es: 12E
+- send trigger code 0-15, the code must be in two digits, for 2 send 02.     es: 12 01 02 ....
 - auto trigger: <trigger codeT<time milliseconds>E>  es: 12T2000E   send code 12 for 2 seconds and set all pin to 0
 
 Python example:
 
+todo
+
 Eprime example:
+
+todo
 
 Test:
 - tested with eprime3, opensesame, psychopy
@@ -106,9 +108,6 @@ Try it on SimulIDE:
 - https://simulide.com/p/  send command via SimulIDE console
 
 
-![image](https://github.com/user-attachments/assets/f9195bcd-48f6-46df-9165-b114d715a06b)
-
-  
 
 
 
