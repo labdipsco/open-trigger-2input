@@ -1,10 +1,9 @@
-
-//command 0 to 15 on Serial and Serial1
+//command 0 to 15on Serial and Serial1
 //config command: pauto<on/off>wait<on/off>time<0 to 99999999>@
-//arduino - parallel port pins: ??-D0, ??-D1, ...,??-D7
+//arduino - parallel port pins: 37-D0, 36-D1, ...,30-D7
 //serial - arduino pins: 
-//????Serial set pin 34,35,36,37 ; send 8 via Serial set 1000 on pin 34,..,37
-//????Serial1 set pin 30,31,32,33 ; send 6 via Serial set 0110 on pin 30,..,33 
+//Serial set pin 34,35,36,37 ; send 8 via Serial set 1000 on pin 34,..,37
+//Serial1 set pin 30,31,32,33 ; send 6 via Serial set 0110 on pin 30,..,33 
 
 #include <EEPROM.h>
 
@@ -60,7 +59,7 @@ bool isHexChar2(char c) {
     return (c >= '0' && c <= '5') ;
 }
 
-String read2CharFromSerial(HardwareSerial &serialx) {
+String readHexCharFromSerial(HardwareSerial &serialx) {
     if (serialx.available() >= 2) {
         char firstChar = serialx.peek();
         if (firstChar=='p') {return "-1";}
@@ -117,7 +116,7 @@ void liveConfiguration(HardwareSerial &serialx) {
     if (firstChar == 'p') {
         String cmd = serialx.readStringUntil('@');
         cmd.toLowerCase();
-        Serial.println(cmd);
+        serialx.println(cmd);
 
         if (cmd.indexOf("autoon") >= 0) {
             config.autoMode = true;
@@ -132,7 +131,7 @@ void liveConfiguration(HardwareSerial &serialx) {
         }
 
         int tIndex = cmd.indexOf("time");
-        serialx.println(tIndex);
+        Serial.println(tIndex);
         if (tIndex >= 0) {
             String tPart = cmd.substring(tIndex + 4);
             config.duration = tPart.toInt();
@@ -151,13 +150,13 @@ void liveConfiguration(HardwareSerial &serialx) {
 
 void serialWaitModeAutoOnOff() {
      
-    trig1 = read2CharFromSerial(Serial);
+    trig1 = readHexCharFromSerial(Serial);
     if ((trig1 != "-1") && (received1 == false)) {
         bin1 = convertToBinary4Bit(trig1);
         received1 = true;
     }
 
-    trig2 = read2CharFromSerial(Serial1);
+    trig2 = readHexCharFromSerial(Serial1);
     if ((trig2 != "-1") && (received2 == false)) {
         bin2 = convertToBinary4Bit(trig2);
         received2 = true;
@@ -186,8 +185,8 @@ void serialWaitModeAutoOnOff() {
 }
 
 void serialNoWaitModeAutoModeOff() {
-    trig1 = read2CharFromSerial(Serial);
-    trig2 = read2CharFromSerial(Serial1);
+    trig1 = readHexCharFromSerial(Serial);
+    trig2 = readHexCharFromSerial(Serial1);
 
     if (trig1 != "-1") bin1 = convertToBinary4Bit(trig1);
     if (trig2 != "-1") bin2 = convertToBinary4Bit(trig2);
@@ -196,7 +195,7 @@ void serialNoWaitModeAutoModeOff() {
 }
 
 void serialNoWaitModeAutoModeOn() {
-    trig1 = read2CharFromSerial(Serial);
+    trig1 = readHexCharFromSerial(Serial);
     unsigned long duration = config.duration;
     duration = duration * 1000;
 
@@ -205,7 +204,7 @@ void serialNoWaitModeAutoModeOn() {
         timer1 = false;
     }
 
-    trig2 = read2CharFromSerial(Serial1);
+    trig2 = readHexCharFromSerial(Serial1);
     if ((timer2 == true) && (trig2 == "-1") && (micros() - startTime2 >= duration)) {
         trig2 = "0";
         timer2 = false;
@@ -232,12 +231,13 @@ void serialNoWaitModeAutoModeOn() {
 }
 
 void loop() {
-
-    if (Serial.available()>4)  {
-        Serial.println("--qui--");
+   //pin 29 28 .... 23 22
+  //  PORTA=0b00110011;
+//return;
+    if (Serial.available()>0)  {
         liveConfiguration(Serial);
     }
-    if (Serial1.available()>4)  {
+    if (Serial1.available()>0)  {
         liveConfiguration(Serial1);
     }
         
