@@ -190,7 +190,8 @@ void liveConfiguration(HardwareSerial &serialx) {
             String tPart = cmd.substring(tIndex + 4);
             config.duration = tPart.toInt();
         }
-
+        EEPROM.put(0, config);
+        
         serialx.println("---- Comando ricevuto ----");
         serialx.print("autoMode: ");
         serialx.println(config.autoMode ? "ON" : "OFF");
