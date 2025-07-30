@@ -5,6 +5,7 @@
 //Serial set pin 34,35,36,37 ; send 8 via Serial set 1000 on pin 34,..,37
 //Serial1 set pin 30,31,32,33 ; send 6 via Serial set 0110 on pin 30,..,33 
 
+#include <ArduinoGraphics.h>
 #include <EEPROM.h>
 #include "Arduino_LED_Matrix.h"
 
@@ -70,7 +71,8 @@ void setup() {
     matrix.begin();
     matrix.clear();
 
-    Serial.println("Ciao 115200 baud ");
+    String message = "---> ---> Serial ports configured at 115200 baud 115200 baud";
+    scrollingText(message.c_str(), 60);
 }
 
 void SetParallelPort(String bin2, String bin1) {
@@ -217,12 +219,19 @@ void liveConfiguration(HardwareSerial &serialx) {
 
 
         matrix.renderBitmap(frame2, 8, 12);
-        delay(1000);
+        delay(500);
         matrix.clear();
+        String autoStatus = config.autoMode ? "ON" : "OFF";
+        String waitStatus = config.waitMode ? "ON" : "OFF";
+        String message = "Auto mode " + autoStatus + "  Wait mode " + waitStatus + " Time " + config.duration + "ms";
 
-        trig1="00";
-        trig2="00";
-
+        scrollingText(message.c_str(), 60);
+        
+        trig1="-1";
+        trig2="-1";
+        bin1 = "0000";
+        bin2 = "0000";
+        /*
         serialx.println("---- Comando ricevuto ----");
         serialx.print("autoMode: ");
         serialx.println(config.autoMode ? "ON" : "OFF");
@@ -231,8 +240,21 @@ void liveConfiguration(HardwareSerial &serialx) {
         serialx.print("duration: ");
         serialx.println(config.duration);
         serialx.println("--------------------------");
+        */
     }
 }
+
+void scrollingText(const char* txt, uint32_t speedMs) {
+  matrix.beginDraw();
+  matrix.stroke(0xFFFFFFFF);          // Colore del testo (bianco)
+  matrix.textScrollSpeed(speedMs);    // Velocità dello scroll
+  matrix.textFont(Font_5x7);          // Font a 5x7 pixel
+  matrix.beginText(0, 1, 0xFFFFFF);   // Inizia il testo alla riga (0,1), colore bianco
+  matrix.println(txt);                // Il testo da scrollare
+  matrix.endText(SCROLL_LEFT);        // Scroll verso sinistra
+  matrix.endDraw();                   // Applica il frame
+}
+
 
 void serialWaitModeAutoOnOff() {
      
