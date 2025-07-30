@@ -14,7 +14,7 @@ uint8_t frame1[8][12] = {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1 },
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
@@ -85,6 +85,7 @@ void SetParallelPort(String bin2, String bin1) {
   digitalWrite(3, bitRead(byteValue, 1));
   digitalWrite(4, bitRead(byteValue, 2));
   digitalWrite(5, bitRead(byteValue, 3));
+
   //bin2
   digitalWrite(6, bitRead(byteValue, 4));
   digitalWrite(7, bitRead(byteValue, 5));
@@ -102,15 +103,17 @@ void updateMatrixRowFromNibbles(String bin2, String bin1) {
 
   // Offset per centrare i bit sulla riga da 12 colonne
   // bin2 parte da colonna 2, bin1 da colonna 6
-  frame1[0][0] = bin2.charAt(0) == '1' ? 1 : 0;
-  frame1[0][1] = bin2.charAt(1) == '1' ? 1 : 0;
-  frame1[0][2] = bin2.charAt(2) == '1' ? 1 : 0;
-  frame1[0][3] = bin2.charAt(3) == '1' ? 1 : 0;
+  for (int i = 0; i < 3; i++) {
+    frame1[i][0] = bin2.charAt(0) == '1' ? 1 : 0;
+    frame1[i][1] = bin2.charAt(1) == '1' ? 1 : 0;
+    frame1[i][2] = bin2.charAt(2) == '1' ? 1 : 0;
+    frame1[i][3] = bin2.charAt(3) == '1' ? 1 : 0;
 
-  frame1[0][8] = bin1.charAt(0) == '1' ? 1 : 0;
-  frame1[0][9] = bin1.charAt(1) == '1' ? 1 : 0;
-  frame1[0][10] = bin1.charAt(2) == '1' ? 1 : 0;
-  frame1[0][11] = bin1.charAt(3) == '1' ? 1 : 0;
+    frame1[i][8] = bin1.charAt(0) == '1' ? 1 : 0;
+    frame1[i][9] = bin1.charAt(1) == '1' ? 1 : 0;
+    frame1[i][10] = bin1.charAt(2) == '1' ? 1 : 0;
+    frame1[i][11] = bin1.charAt(3) == '1' ? 1 : 0;
+  }
   matrix.renderBitmap(frame1, 8, 12);
   Serial.print("b1: ");Serial.println(bin1);
   Serial.print("b2: ");Serial.println(bin2);
@@ -216,6 +219,9 @@ void liveConfiguration(HardwareSerial &serialx) {
         matrix.renderBitmap(frame2, 8, 12);
         delay(1000);
         matrix.clear();
+
+        trig1="00";
+        trig2="00";
 
         serialx.println("---- Comando ricevuto ----");
         serialx.print("autoMode: ");
