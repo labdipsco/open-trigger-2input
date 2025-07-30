@@ -9,6 +9,26 @@
 #include "Arduino_LED_Matrix.h"
 
 ArduinoLEDMatrix matrix;
+uint8_t frame1[8][12] = {
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
+  };
+  uint8_t frame2[8][12] = {
+  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+  };
 
 struct Settings {
     uint16_t signature;     // validation field
@@ -71,24 +91,14 @@ void SetParallelPort(String bin2, String bin1) {
   digitalWrite(8, bitRead(byteValue, 6));
   digitalWrite(9, bitRead(byteValue, 7));
 
-  // LED di segnalazione (facoltativo)
-  digitalWrite(13, bitRead(byteValue, 0));
+  //arduino LED (optional)
+  //digitalWrite(13, bitRead(byteValue, 0));
 
   updateMatrixRowFromNibbles(bin2, bin1);
 }
 
 void updateMatrixRowFromNibbles(String bin2, String bin1) {
-  uint8_t frame1[8][12] = {
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-  };
-  // Assumiamo bin2 e bin1 siano stringhe binarie da 4 caratteri ciascuna
+    // Assumiamo bin2 e bin1 siano stringhe binarie da 4 caratteri ciascuna
 
   // Offset per centrare i bit sulla riga da 12 colonne
   // bin2 parte da colonna 2, bin1 da colonna 6
@@ -104,6 +114,7 @@ void updateMatrixRowFromNibbles(String bin2, String bin1) {
   matrix.renderBitmap(frame1, 8, 12);
   Serial.print("b1: ");Serial.println(bin1);
   Serial.print("b2: ");Serial.println(bin2);
+  
 }
 
 
@@ -194,12 +205,17 @@ void liveConfiguration(HardwareSerial &serialx) {
         }
 
         int tIndex = cmd.indexOf("time");
-        Serial.println(tIndex);
+        //Serial.println(tIndex);
         if (tIndex >= 0) {
             String tPart = cmd.substring(tIndex + 4);
             config.duration = tPart.toInt();
         }
         EEPROM.put(0, config);
+
+
+        matrix.renderBitmap(frame2, 8, 12);
+        delay(1000);
+        matrix.clear();
 
         serialx.println("---- Comando ricevuto ----");
         serialx.print("autoMode: ");
@@ -301,9 +317,7 @@ void serialNoWaitModeAutoModeOn() {
 }
 
 void loop() {
-   //pin 29 28 .... 23 22
-  //  PORTA=0b00110011;
-//return;
+   
     if (Serial.available()>0)  {
         liveConfiguration(Serial);
     }
