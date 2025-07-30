@@ -56,7 +56,7 @@ void setup() {
 void SetParallelPort(String bin2, String bin1) {
   // Unisce i due nibble per formare un byte binario
   String fullBinary = bin2 + bin1;
-
+  
   // Converte la stringa binaria in un byte
   byte byteValue = strtol(fullBinary.c_str(), NULL, 2);
 
@@ -65,13 +65,14 @@ void SetParallelPort(String bin2, String bin1) {
   digitalWrite(3, bitRead(byteValue, 1));
   digitalWrite(4, bitRead(byteValue, 2));
   digitalWrite(5, bitRead(byteValue, 3));
+  //bin2
   digitalWrite(6, bitRead(byteValue, 4));
   digitalWrite(7, bitRead(byteValue, 5));
   digitalWrite(8, bitRead(byteValue, 6));
   digitalWrite(9, bitRead(byteValue, 7));
 
   // LED di segnalazione (facoltativo)
-  digitalWrite(13, HIGH);
+  digitalWrite(13, bitRead(byteValue, 0));
 
   updateMatrixRowFromNibbles(bin2, bin1);
 }
@@ -85,32 +86,34 @@ void updateMatrixRowFromNibbles(String bin2, String bin1) {
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
   { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }
+  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
   };
   // Assumiamo bin2 e bin1 siano stringhe binarie da 4 caratteri ciascuna
 
   // Offset per centrare i bit sulla riga da 12 colonne
   // bin2 parte da colonna 2, bin1 da colonna 6
-  frame1[0][2] = bin2.charAt(0) == '1' ? 1 : 0;
-  frame1[0][3] = bin2.charAt(1) == '1' ? 1 : 0;
-  frame1[0][4] = bin2.charAt(2) == '1' ? 1 : 0;
-  frame1[0][5] = bin2.charAt(3) == '1' ? 1 : 0;
+  frame1[0][0] = bin2.charAt(0) == '1' ? 1 : 0;
+  frame1[0][1] = bin2.charAt(1) == '1' ? 1 : 0;
+  frame1[0][2] = bin2.charAt(2) == '1' ? 1 : 0;
+  frame1[0][3] = bin2.charAt(3) == '1' ? 1 : 0;
 
-  frame1[0][6] = bin1.charAt(0) == '1' ? 1 : 0;
-  frame1[0][7] = bin1.charAt(1) == '1' ? 1 : 0;
-  frame1[0][8] = bin1.charAt(2) == '1' ? 1 : 0;
-  frame1[0][9] = bin1.charAt(3) == '1' ? 1 : 0;
+  frame1[0][8] = bin1.charAt(0) == '1' ? 1 : 0;
+  frame1[0][9] = bin1.charAt(1) == '1' ? 1 : 0;
+  frame1[0][10] = bin1.charAt(2) == '1' ? 1 : 0;
+  frame1[0][11] = bin1.charAt(3) == '1' ? 1 : 0;
   matrix.renderBitmap(frame1, 8, 12);
+  Serial.print("b1: ");Serial.println(bin1);
+  Serial.print("b2: ");Serial.println(bin2);
 }
 
 
 
-bool isHexChar1(char c) {
+bool isFirstChar01(char c) {
     return (c >= '0' && c <= '1') ;
 }
-
-bool isHexChar2(char c) {
+bool isSecondChar05(char c) {
     return (c >= '0' && c <= '5') ;
+
 }
 
 String readHexCharFromSerial(HardwareSerial &serialx) {
@@ -118,11 +121,17 @@ String readHexCharFromSerial(HardwareSerial &serialx) {
         char firstChar = serialx.peek();
         if (firstChar=='p') {return "-1";}
         char c1 = serialx.read();
-        if (!(isHexChar1(c1))) {serialx.read(); return "-1"; }
+        if (!(isFirstChar01(c1))) {serialx.read(); return "-1"; }
         char c2 = serialx.read();
-        if (!(isHexChar2(c2))) {serialx.read(); return "-1"; }
-        return String(String(c1) + String(c2));
-        
+        if (c1=='0') {
+            if (!isdigit(c2)) {serialx.read(); return "-1"; }
+            return String(String(c1) + String(c2));
+        }
+        if (c1=='1') {
+            if (!(isSecondChar05(c2))) {serialx.read(); return "-1"; }
+            return String(String(c1) + String(c2));
+        }
+       
     }
     return "-1";
 }
@@ -191,7 +200,7 @@ void liveConfiguration(HardwareSerial &serialx) {
             config.duration = tPart.toInt();
         }
         EEPROM.put(0, config);
-        
+
         serialx.println("---- Comando ricevuto ----");
         serialx.print("autoMode: ");
         serialx.println(config.autoMode ? "ON" : "OFF");
@@ -242,10 +251,17 @@ void serialNoWaitModeAutoModeOff() {
     trig1 = readHexCharFromSerial(Serial);
     trig2 = readHexCharFromSerial(Serial1);
 
-    if (trig1 != "-1") bin1 = convertToBinary4Bit(trig1);
-    if (trig2 != "-1") bin2 = convertToBinary4Bit(trig2);
+    if (trig1 != "-1") {
+        bin1 = convertToBinary4Bit(trig1);
+        SetParallelPort(bin2,bin1);
+    }
+    if (trig2 != "-1") {
+        bin2 = convertToBinary4Bit(trig2);
+        SetParallelPort(bin2,bin1);
+    }
+    
 
-    SetParallelPort(bin2,bin1);
+    //SetParallelPort(bin2,bin1);
 }
 
 void serialNoWaitModeAutoModeOn() {
