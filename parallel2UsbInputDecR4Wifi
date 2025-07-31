@@ -76,7 +76,7 @@ void setup() {
     matrix.clear();
 
     String message = "---> Serial ports: 115200 baud 115200 baud";
-    scrollingText(message.c_str(), 15);
+    scrollingText(message.c_str(), 25);
 }
 
 void SetParallelPort(String bin2, String bin1) {
@@ -227,8 +227,10 @@ void liveConfiguration(HardwareSerial &serialx) {
         String autoStatus = config.autoMode ? "ON" : "OFF";
         String waitStatus = config.waitMode ? "ON" : "OFF";
         String message = "Auto mode " + autoStatus + "  Wait mode " + waitStatus + " Time " + config.duration + "ms";
-
         scrollingText(message.c_str(), 60);
+        matrix.renderBitmap(frame2, 8, 12);
+        delay(500);
+        matrix.clear();
         
         trig1="-1";
         trig2="-1";
