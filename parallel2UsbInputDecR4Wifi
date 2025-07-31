@@ -76,7 +76,7 @@ void setup() {
     matrix.clear();
 
     String message = "---> Serial ports: 115200 baud 115200 baud";
-    scrollingText(message.c_str(), 5);
+    scrollingText(message.c_str(), 15);
 }
 
 void SetParallelPort(String bin2, String bin1) {
