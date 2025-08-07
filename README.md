@@ -3,34 +3,27 @@
 
 #Open Trigger 
 
-Trigger Interface for Psychological Experiment and Stimulus. It works with major Stimulus Presentation Software. It can receive two triggers from two usb ports and sends to parallel port. 
+Trigger Interface for Experiment and Stimulus. It works with major Stimulus Presentation Software. It can receive two triggers from two usb ports and sends to parallel port. 
 
 Features:
- - Two Usb connection to send trigger simultaneously fromt two pc.
+ - Two Usb connection to send trigger simultaneously from two pc.
  - Auto trigger function, send a trigger and set the parallel port to  0 after a delay
- - Sync mode on/off, in on mode, wait that both the trigger are received before send to the parallel. In off mode every trigger are sent to the parallel immediately
+ - Sync mode on/off, in on mode, wait that both triggers are received before send to the parallel port. In off mode every trigger are sent to the parallel immediately and independently.
  - Trigger Elaboration < 1ms
 
 ## How it works
 
 ## System Overview: Dual Serial Text-Based Trigger Input with Parallel Output Encoding
 
-The Arduino microcontroller listens concurrently on two USB serial interfaces: `Serial1` and `Serial2`.  
-Each interface receives a **2-character ASCII-encoded decimal string** representing a trigger value in the range `"00"` to `"15"`.  
-Upon reception, each string is parsed into an integer (0–15), then converted to a 4-bit binary value.
+The Arduino microcontroller listens on two USB serial interfaces: `Serial` (the arduino usb connection) and `Serial1` (via  module FT232RL,  USB-C to TTL ).  
+Each interface receives a **2-character ASCII-encoded decimal string** representing a trigger value in the range `"00"` to `"15"`, then converted to a 4-bit binary value. (0000b to 1111b).  
 
 The final 8-bit output is composed as follows:
 
-- **Upper nibble** (`bits 7–4`) = value from `Serial2`  
-- **Lower nibble** (`bits 3–0`) = value from `Serial1`  
+- **Upper nibble** (`bits 7–4`) = value from `Serial1`  
+- **Lower nibble** (`bits 3–0`) = value from `Serial`  
 
-The composed 8-bit value is written to an 8-bit digital parallel output port (e.g., `PORTC`).
-
-### 🧪 Example
-
-| Serial1 input | Serial2 input | Output (hex) | Output (binary) |
-|---------------|----------------|---------------|------------------|
-| `"05"`        | `"12"`         | `0xC5`        | `11000101`       |
+The composed 8-bit value is written to an 8-bit digital parallel output port.
 
 ---
 
@@ -67,15 +60,14 @@ This feature allows generation of **timed output pulses** on the parallel port f
 
 ---
 
-Let me know if you'd like a code snippet or usage demo included below!
 
 
 Installation:
 
-Upload parallel2Inputs.ino sketch to Arduino Mega
+Upload parallel2UsbInputDecMega.ino sketch to Arduino Mega or parallel2UsbInputR4wifi.ini to Arduino Uno R4 wifi.
 
 Hardware:
-- Arduino Mega https://www.arduino.cc/
+- Arduino Mega or Arduino Uno Wifi R4
 - USB to TTL serial adapter (FT232-AZ)
 - Parallel port cable
 
@@ -93,16 +85,6 @@ Alvailable Commands:
 - send trigger code 0-15, the code must be in two digits, for 2 send 02.     es: 12 01 02 ....
 - auto trigger: <trigger codeT<time milliseconds>E>  es: 12T2000E   send code 12 for 2 seconds and set all pin to 0
 
-Python example:
-
-todo
-
-Eprime example:
-
-todo
-
-Test:
-- tested with eprime3, opensesame, psychopy
 
 Try it on SimulIDE:
 - https://simulide.com/p/  send command via SimulIDE console
