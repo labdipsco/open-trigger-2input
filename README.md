@@ -76,15 +76,14 @@ Hardware:
 Arduino Mega pins:
  - pins used D22 to D29; Usb Serial port  set pin D22 to D25, Serial1 set pin D26 to D29
  - example:
- - send 08 via Usb Serial Port set 1000 on pins: 1(D25)0(D24)0(D23)0(D22)
- - send 06 via Serial1 Port set 0110 on pins: 0(D29)1(D28)1(D27)0(D26)
+   - send 08 via Usb Serial Port set 1000 on pins: 1(D25)0(D24)0(D23)0(D22)
+   - send 06 via Serial1 Port set 0110 on pins: 0(D29)1(D28)1(D27)0(D26)
    
 
 Alvailable Commands:
 - send trigger code 00-15, the code must be in two digits (for 2 send 02).
 - show current configuration, send command: p@
 - change configuration: p<auto[on|off]wait[on|off]time[ms]>@  example: pautoon@ , pautooff@, ptime1000@, pautoonwaitofftime120@,...
-- auto trigger: <trigger codeT<time milliseconds>E>  es: 12T2000E   send code 12 for 2 seconds and set all pin to 0
 
 Arduino One Wifi R4 version:
 - There is a sketch parallel2UsbInputDecR4Wifi.ino for arduino One Wifi R4 hardware. It's works as the Mega version but pinout are different. Note also that in R4 version the pin connected to the parallel port are setted sequentially, it takes 10 tp 15 microseconds to set all the pins.
