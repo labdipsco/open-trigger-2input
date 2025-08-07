@@ -1,7 +1,7 @@
 [![Github](https://img.shields.io/badge/Version_1.0-blue)](https://github.com/labdipsco/open-trigger-2input)
 [![Github](https://img.shields.io/badge/GNU_General_Public_License-orange)](https://github.com/labdipsco/open-trigger-2input)
 
-#Open Trigger 
+#Open Trigger 2 Serial Inputs 
 
 Trigger Interface for Experiment and Stimulus. It works with major Stimulus Presentation Software. It can receive two triggers from two usb ports, combine and sends to parallel port. 
 
