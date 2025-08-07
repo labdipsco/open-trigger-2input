@@ -1,9 +1,8 @@
-//command 0 to 15on Serial and Serial1
+//command 00 to 15 on Serial and Serial1
 //config command: pauto<on/off>wait<on/off>time<0 to 99999999>@
-//arduino - parallel port pins: 37-D0, 36-D1, ...,30-D7
-//serial - arduino pins: 
-//Serial set pin 34,35,36,37 ; send 8 via Serial set 1000 on pin 34,..,37
-//Serial1 set pin 30,31,32,33 ; send 6 via Serial set 0110 on pin 30,..,33 
+//arduino mega pins: D22 to D29 
+//Usb Serial port  set pin D22 to D25; 08 set 1000 1(D25)0(D24)0(D23)0(D22)  
+//Serial1 set pin D26 to D29; 06 set 0110 0(D29)1(D28)1(D27)0(D26)
 //screen /dev/ttyUSB0 115200
 
 
@@ -39,7 +38,7 @@ void setup() {
     
     // Configurazione per Arduino Mega 2560
     #if defined(__AVR_ATmega2560__)
-        DDRA = 0b11111111; 
+        DDRA = 0b11111111;   //arduino mega pins: D22 to D29
         PORTA = 0b00000000;  
     #else
         Serial.println("Scheda non riconosciuta");
@@ -159,12 +158,14 @@ void liveConfiguration(HardwareSerial &serialx) {
         String waitStatus = config.waitMode ? "ON" : "OFF";
         String message = "Auto mode " + autoStatus + "  Wait mode " + waitStatus + " Time " + config.duration + "ms";
         
-        
+        //reset pin after configuration
         trig1="-1";
         trig2="-1";
         bin1 = "0000";
         bin2 = "0000";
-        /*
+        SetParallelPort(bin2,bin1);
+
+        
         serialx.println("---- Comando ricevuto ----");
         serialx.print("autoMode: ");
         serialx.println(config.autoMode ? "ON" : "OFF");
@@ -173,7 +174,7 @@ void liveConfiguration(HardwareSerial &serialx) {
         serialx.print("duration: ");
         serialx.println(config.duration);
         serialx.println("--------------------------");
-        */
+        
     }
 }
 
@@ -270,10 +271,10 @@ void serialWaitModeOFFAutoModeOn() {
     }
 }
 
-//turn OFF the integrated LED after 100ms if it is ON, so it flashes when data is transmitted
+//turn OFF the integrated LED after 200ms if it is ON, so it flashes when data is transmitted
 void Led13off() {
      if (StartTimeLed13!=0) {
-        if ((millis()-StartTimeLed13)>100)  {  digitalWrite(13, LOW); StartTimeLed13=0; Serial.println("13 LOW"); }
+        if ((millis()-StartTimeLed13)>200)  {  digitalWrite(13, LOW); StartTimeLed13=0; /*Serial.println("13 LOW");*/ }
     }
 }
 
