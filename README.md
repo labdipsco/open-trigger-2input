@@ -3,7 +3,7 @@
 
 #Open Trigger 2 Serial Inputs 
 
-Trigger Interface for Experiment and Stimulus. It works with major Stimulus Presentation Software. It can receive two triggers from two usb ports, combine and sends to parallel port. 
+Trigger Interface for Experiment and Stimulus.  It can receive two triggers from two usb ports, combine and sends to parallel port. 
 
 Features:
  - Two Usb connection to send trigger simultaneously from two pc.
