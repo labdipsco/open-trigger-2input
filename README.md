@@ -67,9 +67,9 @@ Installation:
 Upload parallel2UsbInputDecMega.ino sketch to Arduino Mega or parallel2UsbInputR4wifi.ini to Arduino Uno R4 wifi.
 
 Hardware:
-- Arduino Mega
-- USB to TTL serial adapter (FT232-AZ)
-- Parallel port cable
+- Arduino Mega 2560 R3
+- USB to TTL serial adapter (FT232-AZ) connected to arduino pin 16 (tx) and (17) rx
+- Parallel port cable connected to arduino pins D22 to D29
 
 <img src="https://github.com/user-attachments/assets/7cb8b0bf-258f-4f8e-a3a4-b13eee1292fd" width="300">
 
