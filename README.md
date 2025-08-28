@@ -94,7 +94,9 @@ How to send command for testing on linux:
 Arduino One Wifi R4 version:
 - There is a sketch parallel2UsbInputDecR4Wifi.ino for arduino One Wifi R4 hardware. It's works as the Mega version but pinout are different. Note also that in R4 version the pin connected to the parallel port are setted sequentially, it takes 10 tp 15 microseconds to set all the pins.
 
+## 📢 Disclaimer
 
+This project is provided “as is” without warranty of any kind. By using or building this system, you acknowledge and agree that you do so at your own risk. The creators of this project are not responsible for any injury, damage, or legal issues that may arise from improper use, installation, or handling of high-voltage equipment. Always follow local safety regulations and consult a professional if unsure.
 
 
 
