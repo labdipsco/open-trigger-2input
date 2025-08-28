@@ -1,37 +1,13 @@
-//command 0 to 15on Serial and Serial1
+//command 00 to 15 on Serial and Serial2
 //config command: pauto<on/off>wait<on/off>time<0 to 99999999>@
-//arduino - parallel port pins: 37-D0, 36-D1, ...,30-D7
-//serial - arduino pins: 
-//Serial set pin 34,35,36,37 ; send 8 via Serial set 1000 on pin 34,..,37
-//Serial1 set pin 30,31,32,33 ; send 6 via Serial set 0110 on pin 30,..,33 
+//arduino mega pins: D22 to D29 
+//Usb Serial port  set pin D22 to D25; 08 set 1000 1(D25)0(D24)0(D23)0(D22)  
+//Serial2 set pin D26 to D29; 06 set 0110 0(D29)1(D28)1(D27)0(D26)
 //screen /dev/ttyUSB0 115200
 
 
-#include <ArduinoGraphics.h>
 #include <EEPROM.h>
-#include "Arduino_LED_Matrix.h"
 
-ArduinoLEDMatrix matrix;
-uint8_t frame1[8][12] = {
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1 },
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 },
-  { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }
-  };
-  uint8_t frame2[8][12] = {
-  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-  { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
-  };
 
 //for shutdown-resistant configuration parameters
 struct Settings {
@@ -48,8 +24,8 @@ unsigned long StartTimeLed13=0;
 void setup() {
     Serial.begin(115200);
     Serial.setTimeout(7200000); // Timeout di 2h
-    Serial1.begin(115200);
-    Serial1.setTimeout(7200000); // Timeout di 2h
+    Serial2.begin(115200);
+    Serial2.setTimeout(7200000); // Timeout di 2h
 
     EEPROM.get(0, config);
     if (config.signature != CONFIG_SIGNATURE) {
@@ -60,80 +36,37 @@ void setup() {
         EEPROM.put(0, config);
     }
     
-    //parallel port pins
-     for (int i = 2; i < 10; i++) {
-      pinMode(i, OUTPUT);  
-      digitalWrite(i,LOW);   
-    }
-    //optional strobe pin, connect pin1 on the parallel port
-    //pinMode(12, OUTPUT); //probe pin
-    //digitalWrite(12,HIGH);
+    // Configurazione per Arduino Mega 2560
+    #if defined(__AVR_ATmega2560__)
+        DDRA = 0b11111111;   //arduino mega pins: D22 to D29
+        PORTA = 0b00000000;  
+    #else
+        Serial.println("Scheda non riconosciuta");
+    #endif
 
+   
     pinMode(13, OUTPUT); //integrated led pin
     digitalWrite(13,LOW);
 
-    matrix.begin();
-    matrix.clear();
-
-    String message = "---> Serial ports: 115200 baud 115200 baud";
-    scrollingText(message.c_str(), 25);
+ 
 }
 
 void SetParallelPort(String bin2, String bin1) {
   // Unisce i due nibble per formare un byte binario
   String fullBinary = bin2 + bin1;
   
-  // Converte la stringa binaria in un byte
-  byte byteValue = strtol(fullBinary.c_str(), NULL, 2);
-
-  // Scrive ogni singolo bit sui pin D2–D9 (bit 0 → D2, bit 7 → D9)
-  digitalWrite(2, bitRead(byteValue, 0));
-  digitalWrite(3, bitRead(byteValue, 1));
-  digitalWrite(4, bitRead(byteValue, 2));
-  digitalWrite(5, bitRead(byteValue, 3));
-
-  //bin2
-  digitalWrite(6, bitRead(byteValue, 4));
-  digitalWrite(7, bitRead(byteValue, 5));
-  digitalWrite(8, bitRead(byteValue, 6));
-  digitalWrite(9, bitRead(byteValue, 7));
+  
+  uint8_t porta_out = strtol(fullBinary.c_str(), nullptr, 2);  // Base 2 per il binario
+    
+  #if defined(__AVR_ATmega2560__)
+       PORTA = porta_out;
+  #endif
 
   //arduino LED (optional)
   digitalWrite(13, HIGH);
   StartTimeLed13 = millis();
-
-  Serial.print("b1: ");Serial.print(bin1);
-  Serial.print("   b2: ");Serial.println(bin2);
-  
-  updateMatrixRowFromNibbles(bin2, bin1);
-  Serial.println(" matrix");
   
 }
-
-void updateMatrixRowFromNibbles(String bin2, String bin1) {
-    // Assumiamo bin2 e bin1 siano stringhe binarie da 4 caratteri ciascuna
-    // Offset per centrare i bit sulla riga da 12 colonne
-    // bin2 parte da colonna 2, bin1 da colonna 6
-    if (bin2 != "0000") {
-        for (int i = 0; i < 3; i++) {
-            frame1[i][0] = bin2.charAt(0) == '1' ? 1 : 0;
-            frame1[i][1] = bin2.charAt(1) == '1' ? 1 : 0;
-            frame1[i][2] = bin2.charAt(2) == '1' ? 1 : 0;
-            frame1[i][3] = bin2.charAt(3) == '1' ? 1 : 0;
-        }
-    }
-    if (bin1 != "0000") {
-       for (int i = 0; i < 3; i++) {
-            frame1[i][8] = bin1.charAt(0) == '1' ? 1 : 0;
-            frame1[i][9] = bin1.charAt(1) == '1' ? 1 : 0;
-            frame1[i][10] = bin1.charAt(2) == '1' ? 1 : 0;
-            frame1[i][11] = bin1.charAt(3) == '1' ? 1 : 0;
-       }
-    }
-    matrix.renderBitmap(frame1, 8, 12);
-}
-
-
 
 bool isFirstChar01(char c) {
     return (c >= '0' && c <= '1') ;
@@ -221,22 +154,18 @@ void liveConfiguration(HardwareSerial &serialx) {
         EEPROM.put(0, config);
 
 
-        matrix.renderBitmap(frame2, 8, 12);
-        delay(500);
-        matrix.clear();
         String autoStatus = config.autoMode ? "ON" : "OFF";
         String waitStatus = config.waitMode ? "ON" : "OFF";
         String message = "Auto mode " + autoStatus + "  Wait mode " + waitStatus + " Time " + config.duration + "ms";
-        scrollingText(message.c_str(), 60);
-        matrix.renderBitmap(frame2, 8, 12);
-        delay(500);
-        matrix.clear();
         
+        //reset pin after configuration
         trig1="-1";
         trig2="-1";
         bin1 = "0000";
         bin2 = "0000";
-        /*
+        SetParallelPort(bin2,bin1);
+
+        
         serialx.println("---- Comando ricevuto ----");
         serialx.print("autoMode: ");
         serialx.println(config.autoMode ? "ON" : "OFF");
@@ -245,20 +174,11 @@ void liveConfiguration(HardwareSerial &serialx) {
         serialx.print("duration: ");
         serialx.println(config.duration);
         serialx.println("--------------------------");
-        */
+        
     }
 }
 
-void scrollingText(const char* txt, uint32_t speedMs) {
-  matrix.beginDraw();
-  matrix.stroke(0xFFFFFFFF);          // Colore del testo (bianco)
-  matrix.textScrollSpeed(speedMs);    // Velocità dello scroll
-  matrix.textFont(Font_5x7);          // Font a 5x7 pixel
-  matrix.beginText(0, 1, 0xFFFFFF);   // Inizia il testo alla riga (0,1), colore bianco
-  matrix.println(txt);                // Il testo da scrollare
-  matrix.endText(SCROLL_LEFT);        // Scroll verso sinistra
-  matrix.endDraw();                   // Applica il frame
-}
+
 
 
 void serialWaitOnModeAutoOnOff() {
@@ -269,7 +189,7 @@ void serialWaitOnModeAutoOnOff() {
         received1 = true;
     }
 
-    trig2 = readHexCharFromSerial(Serial1);
+    trig2 = readHexCharFromSerial(Serial2);
     if ((trig2 != "-1") && (received2 == false)) {
         bin2 = convertToBinary4Bit(trig2);
         received2 = true;
@@ -300,7 +220,7 @@ void serialWaitOnModeAutoOnOff() {
 
 void serialWaitModeOFFAutoModeOff() {
     trig1 = readHexCharFromSerial(Serial);
-    trig2 = readHexCharFromSerial(Serial1);
+    trig2 = readHexCharFromSerial(Serial2);
 
     if (trig1 != "-1") {
         bin1 = convertToBinary4Bit(trig1);
@@ -325,7 +245,7 @@ void serialWaitModeOFFAutoModeOn() {
         timer1 = false;
     }
 
-    trig2 = readHexCharFromSerial(Serial1);
+    trig2 = readHexCharFromSerial(Serial2);
     if ((timer2 == true) && (trig2 == "-1") && (micros() - startTime2 >= duration)) {
         trig2 = "0";
         timer2 = false;
@@ -351,10 +271,10 @@ void serialWaitModeOFFAutoModeOn() {
     }
 }
 
-//turn OFF the integrated LED after 100ms if it is ON, so it flashes when data is transmitted
+//turn OFF the integrated LED after 200ms if it is ON, so it flashes when data is transmitted
 void Led13off() {
      if (StartTimeLed13!=0) {
-        if ((millis()-StartTimeLed13)>100)  {  digitalWrite(13, LOW); StartTimeLed13=0; Serial.println("13 LOW"); }
+        if ((millis()-StartTimeLed13)>200)  {  digitalWrite(13, LOW); StartTimeLed13=0; /*Serial.println("13 LOW");*/ }
     }
 }
 
@@ -366,8 +286,8 @@ void loop() {
     if (Serial.available()>0)  {
         liveConfiguration(Serial);
     }
-    if (Serial1.available()>0)  {
-        liveConfiguration(Serial1);
+    if (Serial2.available()>0)  {
+        liveConfiguration(Serial2);
     }
         
     if (config.waitMode == true) {
