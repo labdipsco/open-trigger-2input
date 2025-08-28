@@ -7,7 +7,7 @@ Trigger Interface for Experiment and Stimulus. It works with major Stimulus Pres
 
 Features:
  - Two Usb connection to send trigger simultaneously from two pc.
- - Auto trigger function, send a trigger and set the parallel port to  0 after a delay
+ - Auto trigger function, send a trigger and set the parallel port to 0 after a delay
  - Sync mode on/off, in on mode, wait that both triggers are received before send to the parallel port. In off mode every trigger are sent to the parallel immediately and independently.
  - Trigger Elaboration < 1ms
 
@@ -15,7 +15,7 @@ Features:
 
 ## System Overview: Dual Serial Text-Based Trigger Input with Parallel Output Encoding
 
-The Arduino microcontroller listens on two USB serial interfaces: `Serial` (the arduino usb connection) and `Serial1` (via  module FT232RL,  USB-C to TTL ).  
+The Arduino microcontroller listens on two USB serial interfaces: `Serial` (the arduino usb connection) and `Serial2` (via  module FT232RL,  USB-C to TTL ).  
 Each interface receives a **2-character ASCII-encoded decimal string** representing a trigger value in the range `"00"` to `"15"`, then converted to a 4-bit binary value. (0000b to 1111b).  
 
 The final 8-bit output is composed as follows:
@@ -85,12 +85,16 @@ Alvailable Commands:
 - show current configuration, send command: p@
 - change configuration: p<auto[on|off]wait[on|off]time[ms]>@  example: pautoon@ , pautooff@, ptime1000@, pautoonwaitofftime120@,...
 
+How to send command for testing on linux:
+- Connect to the arduino serial2 with screen command: screen /dev/ttyUSB0 115200 (with dmesg command check the device name)
+- Connect to the arduino serial via the arduino IDE Serial Monitor, Tools --> Serial Monitor
+
+
+
 Arduino One Wifi R4 version:
 - There is a sketch parallel2UsbInputDecR4Wifi.ino for arduino One Wifi R4 hardware. It's works as the Mega version but pinout are different. Note also that in R4 version the pin connected to the parallel port are setted sequentially, it takes 10 tp 15 microseconds to set all the pins.
 
 
-Try it on SimulIDE:
-- https://simulide.com/p/  send command via SimulIDE console
 
 
 
