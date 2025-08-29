@@ -3,7 +3,7 @@
 //arduino mega pins: D22 to D29 
 //Usb Serial port  set pin D22 to D25; 08 set 1000 1(D25)0(D24)0(D23)0(D22)  
 //Serial2 set pin D26 to D29; 06 set 0110 0(D29)1(D28)1(D27)0(D26)
-//screen /dev/ttyUSB0 115200
+//On linux: (Serial2) screen /dev/ttyUSB0 115200  (Serial) screen /dev/ttyACM0 115200
 
 
 #include <EEPROM.h>
@@ -205,7 +205,7 @@ void serialWaitOnModeAutoOnOff() {
             duration = duration * 1000;
             unsigned long startTime = micros();
             
-            if ((bin2!="0000") && (bin1!="0000")) {
+            if ((bin2!="0000") || (bin1!="0000")) {
                 if (duration <= 16383) {
                     delayMicroseconds(duration);
                 } else {
