@@ -64,7 +64,7 @@ This feature allows generation of **timed output pulses** on the parallel port f
 
 Installation:
 
-Upload parallel2UsbInputDecMega.ino sketch to Arduino Mega or parallel2UsbInputR4wifi.ini to Arduino Uno R4 wifi.
+Upload parallel2UsbInputDecMega.ino sketch to Arduino Mega.
 
 Hardware:
 - Arduino Mega 2560 R3
@@ -83,14 +83,13 @@ Arduino Mega pins:
    
 
 Alvailable Commands:
-- send trigger code 00-15, the code must be in two digits (for 2 send 02).
+- send trigger code 00-15 to serial or/and serial2, the code must be in two digits (for 2 send 02). It's not necessary to send carriage return or other control character.
 - show current configuration, send command: p@
 - change configuration: p<auto[on|off]wait[on|off]time[ms]>@  example: pautoon@ , pautooff@, ptime1000@, pautoonwaitofftime120@,...
 
 How to send command for testing on linux:
 - Connect to the arduino serial2 with screen command: screen /dev/ttyUSB0 115200 (with dmesg command check the device name)
 - Connect to the arduino serial via the arduino IDE Serial Monitor, Tools --> Serial Monitor
-
 
 
 Arduino One Wifi R4 version:
