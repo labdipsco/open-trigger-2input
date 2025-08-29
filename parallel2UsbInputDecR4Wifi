@@ -205,7 +205,7 @@ void serialWaitOnModeAutoOnOff() {
             duration = duration * 1000;
             unsigned long startTime = micros();
             
-            if ((bin2!="0000") && (bin1!="0000")) {
+            if ((bin2!="0000") || (bin1!="0000")) {
                 if (duration <= 16383) {
                     delayMicroseconds(duration);
                 } else {
