@@ -253,7 +253,7 @@ void serialWaitModeOFFAutoModeOn() {
 
     if (trig1 != "-1") {
         bin1 = convertToBinary4Bit(trig1);
-        Serial.println(trig1);
+        //Serial.println(trig1);
         if (trig1 != "0") {
             timer1 = true;
             startTime1 = micros();
