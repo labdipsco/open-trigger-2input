@@ -2,7 +2,7 @@
 //config command: pauto<on/off>wait<on/off>time<0 to 99999999>@
 //arduino mega pins: D22 to D29 
 //Usb Serial port  set pin D22 to D25; 08 set 1000 1(D25)0(D24)0(D23)0(D22)  
-//Serial1 set pin D26 to D29; 06 set 0110 0(D29)1(D28)1(D27)0(D26)
+//Serial2 set pin D26 to D29; 06 set 0110 0(D29)1(D28)1(D27)0(D26)
 //screen /dev/ttyUSB0 115200
 
 
@@ -24,8 +24,8 @@ unsigned long StartTimeLed13=0;
 void setup() {
     Serial.begin(115200);
     Serial.setTimeout(7200000); // Timeout di 2h
-    Serial1.begin(115200);
-    Serial1.setTimeout(7200000); // Timeout di 2h
+    Serial2.begin(115200);
+    Serial2.setTimeout(7200000); // Timeout di 2h
 
     EEPROM.get(0, config);
     if (config.signature != CONFIG_SIGNATURE) {
@@ -189,7 +189,7 @@ void serialWaitOnModeAutoOnOff() {
         received1 = true;
     }
 
-    trig2 = readHexCharFromSerial(Serial1);
+    trig2 = readHexCharFromSerial(Serial2);
     if ((trig2 != "-1") && (received2 == false)) {
         bin2 = convertToBinary4Bit(trig2);
         received2 = true;
@@ -220,7 +220,7 @@ void serialWaitOnModeAutoOnOff() {
 
 void serialWaitModeOFFAutoModeOff() {
     trig1 = readHexCharFromSerial(Serial);
-    trig2 = readHexCharFromSerial(Serial1);
+    trig2 = readHexCharFromSerial(Serial2);
 
     if (trig1 != "-1") {
         bin1 = convertToBinary4Bit(trig1);
@@ -245,7 +245,7 @@ void serialWaitModeOFFAutoModeOn() {
         timer1 = false;
     }
 
-    trig2 = readHexCharFromSerial(Serial1);
+    trig2 = readHexCharFromSerial(Serial2);
     if ((timer2 == true) && (trig2 == "-1") && (micros() - startTime2 >= duration)) {
         trig2 = "0";
         timer2 = false;
@@ -286,8 +286,8 @@ void loop() {
     if (Serial.available()>0)  {
         liveConfiguration(Serial);
     }
-    if (Serial1.available()>0)  {
-        liveConfiguration(Serial1);
+    if (Serial2.available()>0)  {
+        liveConfiguration(Serial2);
     }
         
     if (config.waitMode == true) {
