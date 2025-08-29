@@ -3,6 +3,8 @@
 
 #Open Trigger 2 Serial Inputs 
 
+[go to github repository](https://github.com/labdipsco/open-trigger-2input/)
+
 Trigger Interface for Experiment and Stimulus.  It can receive two triggers from two usb ports, combine and sends to parallel port. 
 
 Features:
