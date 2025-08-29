@@ -73,7 +73,7 @@ Hardware:
 - USB to TTL serial adapter (FT232-AZ) connected to arduino pin 16 (tx) and (17) rx
 - Parallel port cable connected to arduino pins D22 to D29
 
-<img src="https://github.com/user-attachments/assets/7cb8b0bf-258f-4f8e-a3a4-b13eee1292fd" width="300" />
+<img width="1500" height="1500" alt="parallel" src="https://github.com/user-attachments/assets/f9406a7f-8450-4907-86cd-e813f4ab1ce0" />
 
 <img width="600"  alt="ard1" src="https://github.com/user-attachments/assets/359c86e6-f563-4f6f-88e3-5805c24531b5" />
 
