@@ -1,4 +1,4 @@
-//command 00 to 15 on Serial and Serial1
+//command 00 to 15 on Serial and Serial2
 //config command: pauto<on/off>wait<on/off>time<0 to 99999999>@
 //arduino mega pins: D22 to D29 
 //Usb Serial port  set pin D22 to D25; 08 set 1000 1(D25)0(D24)0(D23)0(D22)  
